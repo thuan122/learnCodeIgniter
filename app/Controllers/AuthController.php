@@ -13,7 +13,11 @@ class AuthController extends ResourceController
     use ResponseTrait;
     const TOKEN_NAME = "API TOKEN";
 
-    // Register endpoint
+    /**
+     * Register the user
+     *
+     * @return void
+     */
     public function register()
     {
         $rules = [
@@ -40,6 +44,9 @@ class AuthController extends ResourceController
             "password" => $this->request->getVar("password")
         ]);
 
+        // This won't save password directly to the users table
+        // The password will be hashed and stored in auth_identities table
+        // with the types is 'email_password' 
         $userObjet->save($user);
 
         $response = [
@@ -51,7 +58,11 @@ class AuthController extends ResourceController
         return $this->respond($response, ResponseInterface::HTTP_OK);
     }
 
-    // Login endpoint
+    /**
+     * Login the user
+     *
+     * @return void
+     */
     public function login()
     {
         // Handle user login and also generate token
@@ -95,6 +106,9 @@ class AuthController extends ResourceController
 
         $userObject = new UserModel();
         $user_data = $userObject->findById(auth()->id());
+        // This token will also saved inside auth_identities tables
+        // but with token name types, so that when user logged out
+        // it will find the token name and revoked every single token
         $token = $user_data->generateAccessToken(self::TOKEN_NAME);
         $auth_token = $token->raw_token;
 
@@ -110,7 +124,11 @@ class AuthController extends ResourceController
         return $this->respond($response, ResponseInterface::HTTP_OK);
     }
 
-    // Profile endpoint
+    /**
+     * Get current logged in user's profile
+     *
+     * @return void
+     */
     public function profile()
     {
         // Get logged is user info
@@ -130,7 +148,11 @@ class AuthController extends ResourceController
         }
     }
 
-    // Logout endpoint
+    /**
+     * Logout the current logged in user
+     *
+     * @return void
+     */
     public function logout()
     {
         // Handle user logout, destroy token
@@ -147,6 +169,11 @@ class AuthController extends ResourceController
         }
     }
 
+    /**
+     * Handle for request that require the user to be logged in
+     *
+     * @return void
+     */
     public function invalidRequest()
     {
         return $this->respond($this->genericResponse(
@@ -157,6 +184,15 @@ class AuthController extends ResourceController
         ), ResponseInterface::HTTP_FORBIDDEN);
     }
 
+    /**
+     * Custom response
+     *
+     * @param  int $status
+     * @param  string|array $message
+     * @param  bool $error
+     * @param  array $data
+     * @return array
+     */
     public function genericResponse(int $status, string | array $message, bool $error, array $data): array
     {
         return [

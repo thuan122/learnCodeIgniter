@@ -11,7 +11,12 @@ class ProjectController extends ResourceController
 {
     use ResponseTrait;
 
-    // Add projects into database, user
+    
+    /**
+     * Add a project 
+     *
+     * @return void
+     */
     public function addProject()
     {
         $rules = [
@@ -60,7 +65,12 @@ class ProjectController extends ResourceController
         );
     }
 
-    // List projects that belongs to user, through toke
+        
+    /**
+     * Get all project that belong to the current logged in user 
+     *
+     * @return void
+     */
     public function listProjects()
     {
         $user_id = auth()->id();
@@ -77,8 +87,13 @@ class ProjectController extends ResourceController
             )
         );
     }
-
-    // Delete project that belongs to user, through toke
+    
+    /**
+     * Delete a project (need to be belong the the current logged in user)
+     *
+     * @param  mixed $project_id
+     * @return void
+     */
     public function deleteProject($project_id)
     {
         $user_id = auth()->id();
