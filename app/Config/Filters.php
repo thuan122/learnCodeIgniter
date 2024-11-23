@@ -35,6 +35,8 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        // Register the middleware/filter to the system
+        'apiauth'       => CheckAuthApi::class,
     ];
 
     /**
